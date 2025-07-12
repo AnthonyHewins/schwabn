@@ -1,0 +1,50 @@
+services:
+  # nats:
+  #   image: nats:latest
+  #   ports:
+  #     - 4225:4222
+  #   command: "--js"
+  #   healthcheck:
+  #     test: wget http://nats:4222/healthz -q -S -O -
+  #     start_period: 1s
+  #     retries: 1
+  #     timeout: 1s
+  #     interval: 15s
+
+  # natsbox:
+  #   image: docker.io/natsio/nats-box:latest
+  #   volumes:
+  #     - ../scripts/nats:/bin/nats
+  #   command: "sh /bin/nats/init.sh"
+  #   environment:
+  #     NATS_URL: nats://nats:4222
+  #   depends_on:
+  #     nats:
+  #       condition: service_started
+
+  # schwabn:
+  #   build:
+  #     context: ..
+  #     dockerfile: ./docker/Dockerfile
+  #     args:
+  #       target: schwabn
+  #   command: "/root/schwabn"
+  #   env_file: ../.env
+  #   environment:
+  #     DISABLE_METRICS: true
+  #     DISABLE_HEALTH: true
+  #     DISABLE_TRACING: true
+
+  #     # ENABLE_TRADE_UPDATER: true
+  #     # ENABLE_CANCELER: true
+  #     # ENABLE_ORDERS: true
+
+  #     ENABLE_STOCK_STREAM: true
+  #     STOCK_STREAM_SYMBOLS: AAPL
+  #     STOCK_STREAM_BASE_URL: https://stream.data.alpaca.markets/v2
+
+  #     NATS_URL: nats://nats:4222
+  #     LOG_LEVEL: debug
+  #   depends_on:
+  #     natsbox:
+  #       condition: service_completed_successfully

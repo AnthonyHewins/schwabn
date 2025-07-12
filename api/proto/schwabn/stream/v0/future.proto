@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package stream.v0;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/AnthonyHewins/schwabn/gen/go/stream/v0;stream";
+
+enum SecurityStatus {
+    SECURITY_STATUS_UNSPECIFIED = 0;
+    SECURITY_STATUS_NORMAL = 1;
+    SECURITY_STATUS_HALTED = 2;
+    SECURITY_STATUS_CLOSED = 3;
+}
+
+enum ExchangeID {
+    EXCHANGE_ID_UNSPECIFIED = 0;
+    EXCHANGE_ID_AMEX = 1;
+    EXCHANGE_ID_INDICATOR = 2;
+    EXCHANGE_ID_INDICES = 3;
+    EXCHANGE_ID_MUTUAL_FUND = 4;
+    EXCHANGE_ID_NASDAQ = 5;
+    EXCHANGE_ID_NYSE = 6;
+    EXCHANGE_ID_PACIFIC = 7;
+    EXCHANGE_ID_PINKS = 8;
+    EXCHANGE_ID_OTCBB = 9;
+}
+
+enum Month {
+    MONTH_UNSPECIFIED = 0;
+    MONTH_JANUARY = 1;
+    MONTH_FEBRUARY = 2;
+    MONTH_MARCH = 3;
+    MONTH_APRIL = 4;
+    MONTH_MAY = 5;
+    MONTH_JUNE = 6;
+    MONTH_JULY = 7;
+    MONTH_AUGUST = 8;
+    MONTH_SEPTEMBER = 9;
+    MONTH_OCTOBER = 10;
+    MONTH_NOVEMBER = 11;
+    MONTH_DECEMBER = 12;
+}
+
+message FutureID {
+    string symbol = 1;
+    Month month = 2;
+    // last 2 digits of the year
+    uint32 year = 3;
+}
+
+message Future {
+    // Core identification fields
+    FutureID symbol = 1;                    // Ticker symbol in upper case
+    string description = 2;                  // Description of the product
+    
+    // Price-related fields
+    double bid_price = 3;                   // Current Best Bid Price
+    double ask_price = 4;                   // Current Best Ask Price
+    double last_price = 5;                  // Price at which the last trade was matched
+    double high_price = 6;                  // Day's high trade price
+    double low_price = 7;                   // Day's low trade price
+    double close_price = 8;                 // Previous day's closing price
+    double net_change = 9;                  // (CurrentLast - Prev Close)
+    
+    // Volume and size fields
+    int64 bid_size = 10;                    // Number of contracts for bid
+    int64 ask_size = 11;                    // Number of contracts for ask
+    int64 total_volume = 12;                // Total contracts traded
+    int64 last_size = 13;                   // Contracts traded in last transaction
+    
+    // Exchange information
+    ExchangeID bid_id = 14;                 // Exchange with best bid
+    ExchangeID ask_id = 15;                 // Exchange with best ask
+    ExchangeID exchange_id = 16;            // Primary listing exchange
+    ExchangeID last_id = 17;                // Exchange where last trade occurred
+    string exchange_name = 18;              // Name of exchange
+    
+    // Status and trading information
+    SecurityStatus security_status = 19;    // Trading status
+    bool is_tradable = 20;                  // Flag indicating if contract is tradable
+    bool is_active = 21;                    // Indicates if contract is active
+    bool quoted_in_session = 22;            // Indicates quoting during active session
+    
+    // Time fields
+    google.protobuf.Timestamp quote_time = 23;   // Last quote time
+    google.protobuf.Timestamp trade_time = 24;   // Last trade time
+    google.protobuf.Timestamp ask_time = 25;     // Last ask-side quote time
+    google.protobuf.Timestamp bid_time = 26;     // Last bid-side quote time
+    google.protobuf.Timestamp expiration_date = 27; // Contract expiration date
+    google.protobuf.Timestamp settlement_date = 28; // Settlement date
+    
+    // Additional market data
+    double percent_change = 29;             // Price percentage change
+    int32 open_interest = 30;               // Total open contracts
+    double multiplier = 31;                  // Point value
+    string product = 32;                    // Futures product
+    string future_price_fmt = 33;           // Display format specification
+    string trading_hours = 34;              // Trading schedule
+    string expiration_style = 35;           // Expiration style
+    double mark = 36;                       // Mark-to-market value
+    double tick = 37;                       // Minimum price movement
+    double tick_amount = 38;                // Minimum amount change
+    string active_symbol = 39;              // Active contract symbol
+    double settlement_price = 40;           // Closing price
+    double open_price = 41;
+}

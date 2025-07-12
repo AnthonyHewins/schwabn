@@ -1,0 +1,32 @@
+{
+  "stream_name": "schwabn-v0",
+  "name": "schwabn-futures",
+  "config": {
+    "ack_policy": "explicit",
+    "ack_wait": 30000000000,
+    "deliver_policy": "all",
+    "durable_name": "schwabn-futures",
+    "name": "schwabn-futures",
+    "filter_subject": "schwabn.futures.\u003e",
+    "max_ack_pending": 1000,
+    "max_deliver": -1,
+    "max_waiting": 512,
+    "replay_policy": "instant",
+    "num_replicas": 0,
+    "pause_until": "0001-01-01T00:00:00Z"
+  },
+  "created": "2025-07-12T17:35:15.787582719Z",
+  "delivered": {
+    "consumer_seq": 0,
+    "stream_seq": 0
+  },
+  "ack_floor": {
+    "consumer_seq": 0,
+    "stream_seq": 0
+  },
+  "num_ack_pending": 0,
+  "num_redelivered": 0,
+  "num_waiting": 0,
+  "num_pending": 0,
+  "ts": "2025-07-12T17:35:46.954009939Z"
+}
