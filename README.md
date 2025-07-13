@@ -15,4 +15,4 @@ make schwabn # makes binary -> ./bin/schwabn
 ./bin/schwabn # will run bin
 ```
 
-Now, set the required env vars, and `./bin/schwabn` will run the binary
+Now, set the required env vars, outlined in `.env.tmpl`. Then, source those vars, and `./bin/schwabn` will run the binary

@@ -2,16 +2,19 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"runtime/debug"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/AnthonyHewins/schwabn/internal/conf"
+	"github.com/AnthonyHewins/td"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -24,6 +27,28 @@ type config struct {
 
 	Futures      string `env:"FUTURES"`
 	ChartFutures string `env:"CHART_FUTURES"`
+}
+
+func (c *config) getFutureIDs() ([]td.FutureID, error) {
+	x := strings.Split(strings.TrimSpace(c.Futures), ",")
+
+	if len(x) == 0 {
+		return nil, nil
+	}
+
+	ids := make([]td.FutureID, len(x))
+	for i, v := range x {
+		var id td.FutureID
+		if err := json.Unmarshal([]byte(v), &id); err != nil {
+			return nil, fmt.Errorf(
+				"failed unmarshal of future ID %s; ID must be '/'+<symbol>+<month>+<last 2 digits of year>; error: %w",
+				v, err,
+			)
+		}
+		ids[i] = id
+	}
+
+	return ids, nil
 }
 
 func main() {
