@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package stream.v0;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/AnthonyHewins/schwabn/gen/go/stream/v0;stream";
+
+message ChartFuture {
+    string symbol = 1;
+    google.protobuf.Timestamp time = 2;
+    double openPrice = 3;
+    double highPrice = 4;
+    double lowPrice = 5;
+    double closePrice= 6;
+    double volume = 7;
+}

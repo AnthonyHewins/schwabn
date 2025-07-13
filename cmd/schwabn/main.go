@@ -21,9 +21,9 @@ var version string
 
 type config struct {
 	conf.BootstrapConf
-	Prefix            string        `env:"PREFIX" envDefault:"schwabn"`
-	DataStream        string        `env:"DATA_STREAM" envDefault:"schwabn-v0"`
-	ProcessingTimeout time.Duration `env:"PROCESSING_TIMEOUT" envDefault:"3s"`
+
+	Futures      string `env:"FUTURES"`
+	ChartFutures string `env:"CHART_FUTURES"`
 }
 
 func main() {
@@ -92,6 +92,10 @@ func (a *app) start(ctx context.Context, g *errgroup.Group) {
 func (a *app) shutdown() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
+
+	if a.ws != nil {
+		a.ws.Close(ctx)
+	}
 
 	a.Server.Shutdown(ctx)
 }

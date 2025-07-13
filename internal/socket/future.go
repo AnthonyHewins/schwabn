@@ -16,7 +16,7 @@ func (f *future) subject() string {
 }
 
 func (c *Controller) Future(f *td.Future) {
-	c.future.Forward((*future)(f))
+	c.future.forward((*future)(f))
 }
 
 func futureToProto(f *future) *stream.Future {

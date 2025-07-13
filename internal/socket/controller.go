@@ -16,6 +16,10 @@ type metrics struct {
 	marshalFail, publishFail prometheus.Counter
 }
 
+func (m metrics) list() []prometheus.Collector {
+	return []prometheus.Collector{m.marshalFail, m.publishFail}
+}
+
 func newMetrics(appName, system string) metrics {
 	fn := func(name, help string) prometheus.Counter {
 		return prometheus.NewCounter(prometheus.CounterOpts{
@@ -33,7 +37,8 @@ func newMetrics(appName, system string) metrics {
 }
 
 type Controller struct {
-	future forwarder[*future, *stream.Future]
+	future      forwarder[*future, *stream.Future]
+	chartFuture forwarder[*chartFuture, *stream.ChartFuture]
 }
 
 func New(appName string, logger *slog.Logger, js jetstream.JetStream, timeout time.Duration) *Controller {
@@ -45,7 +50,18 @@ func New(appName string, logger *slog.Logger, js jetstream.JetStream, timeout ti
 			logger:  logger,
 			conv:    futureToProto,
 		},
+		chartFuture: forwarder[*chartFuture, *stream.ChartFuture]{
+			metrics: newMetrics(appName, "chart_futures"),
+			timeout: timeout,
+			js:      js,
+			logger:  logger,
+			conv:    newChartFuture,
+		},
 	}
+}
+
+func (c *Controller) Metrics() []prometheus.Collector {
+	return append(c.chartFuture.list(), c.future.list()...)
 }
 
 type jetstreamMsg interface {
@@ -60,7 +76,7 @@ type forwarder[X jetstreamMsg, Y proto.Message] struct {
 	conv    func(X) Y
 }
 
-func (f forwarder[X, Y]) Forward(x X) {
+func (f forwarder[X, Y]) forward(x X) {
 	ctx, cancel := context.WithTimeout(context.Background(), f.timeout)
 	defer cancel()
 

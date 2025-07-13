@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -44,6 +45,15 @@ func newApp(ctx context.Context) (*app, error) {
 
 	if a.ws, err = a.createWS(ctx, &c.Schwab, js); err != nil {
 		return nil, err
+	}
+
+	for _, fn := range []func(context.Context, *config) error{
+		a.futures,
+		a.chartFutures,
+	} {
+		if err := fn(ctx, &c); err != nil {
+			return nil, err
+		}
 	}
 
 	return &a, nil
@@ -91,4 +101,60 @@ func (a *app) createWS(ctx context.Context, c *conf.Schwab, js jetstream.JetStre
 	}
 
 	return socket, nil
+}
+
+func (a *app) futures(ctx context.Context, c *config) error {
+	x := strings.Split(strings.TrimSpace(c.Futures), ",")
+
+	if len(x) == 0 {
+		return nil
+	}
+
+	ids := make([]td.FutureID, len(x))
+	for i, v := range x {
+		var id td.FutureID
+		if err := json.Unmarshal([]byte(v), &id); err != nil {
+			a.Logger.ErrorContext(ctx,
+				"failed unmarshal of future ID; ID must be '/'+<symbol>+<month>+<last 2 digits of year>",
+				"raw", v,
+				"err", err,
+			)
+			return err
+		}
+		ids[i] = id
+	}
+
+	_, err := a.ws.AddFutureSubscription(ctx, &td.FutureReq{
+		Symbols: ids,
+		Fields:  td.FutureFieldValues(),
+	})
+
+	if err != nil {
+		a.Logger.ErrorContext(ctx, "failed adding futures subscription", "err", err)
+		return err
+	}
+
+	a.Logger.InfoContext(ctx, "subbed to futures", "symbols", x)
+	return nil
+}
+
+func (a *app) chartFutures(ctx context.Context, c *config) error {
+	x := strings.Split(strings.TrimSpace(c.ChartFutures), ",")
+
+	if len(x) == 0 {
+		return nil
+	}
+
+	_, err := a.ws.AddChartFutureSubscription(ctx, &td.ChartFutureReq{
+		Symbols: x,
+		Fields:  td.ChartFutureFieldValues(),
+	})
+
+	if err != nil {
+		a.Logger.ErrorContext(ctx, "failed adding chart futures subscription", "err", err)
+		return err
+	}
+
+	a.Logger.InfoContext(ctx, "subbed to chart futures", "symbols", x)
+	return nil
 }
