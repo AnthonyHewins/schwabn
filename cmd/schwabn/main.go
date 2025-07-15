@@ -30,8 +30,7 @@ type config struct {
 }
 
 func (c *config) getFutureIDs() ([]td.FutureID, error) {
-	x := strings.Split(strings.TrimSpace(c.Futures), ",")
-
+	x := c.symbolList(c.Futures)
 	if len(x) == 0 {
 		return nil, nil
 	}
@@ -49,6 +48,15 @@ func (c *config) getFutureIDs() ([]td.FutureID, error) {
 	}
 
 	return ids, nil
+}
+
+func (c *config) symbolList(s string) []string {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return nil
+	}
+
+	return strings.Split(s, ",")
 }
 
 func main() {

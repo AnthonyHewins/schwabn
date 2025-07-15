@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"strings"
 
 	"github.com/AnthonyHewins/schwabn/internal/conf"
 	"github.com/AnthonyHewins/schwabn/internal/socket"
@@ -33,13 +32,14 @@ func newApp(ctx context.Context) (*app, error) {
 
 	futureIDs, err := c.getFutureIDs()
 	if err != nil {
+		b.Logger.ErrorContext(ctx, "failed getting future IDs", "err", err, "got", c.Futures)
 		return nil, err
 	}
 
 	a := app{
 		Server:       (*conf.Server)(b),
 		futures:      futureIDs,
-		chartFutures: strings.Split(strings.TrimSpace(c.ChartFutures), ","),
+		chartFutures: c.symbolList(c.ChartFutures),
 	}
 	defer func() {
 		if err != nil {
@@ -54,8 +54,7 @@ func newApp(ctx context.Context) (*app, error) {
 	}
 
 	a.handler = socket.New(appName, a.Logger, js, c.Schwab.Timeout)
-
-	if a.ws, err = a.createWS(ctx, &c.Schwab); err != nil {
+	if err = a.renewWS(ctx, &c.Schwab); err != nil {
 		return nil, err
 	}
 

@@ -10,19 +10,20 @@ import (
 	"github.com/coder/websocket"
 )
 
-func (a *app) createWS(ctx context.Context, c *conf.Schwab) (*td.WS, error) {
+func (a *app) renewWS(ctx context.Context, c *conf.Schwab) error {
 	c.APISecret = strings.TrimSpace(c.APISecret)
 	l := a.Logger.With(
 		"apikey", c.APIKey,
-		"len(secret)>0 after trimming spaces", len(c.APISecret) > 0,
 		"baseURL", c.BaseURL,
 		"authUrl", c.AuthURL,
-		"len(accessToken)>0", c.AccessToken,
-		"len(refreshToken)>0", c.RefreshToken,
+		"len(secret)>0 after trimming spaces", len(c.APISecret) > 0,
+		"len(accessToken)>0", len(c.AccessToken) > 0,
+		"len(refreshToken)>0", len(c.RefreshToken) > 0,
 		"timeout", c.Timeout,
 	)
 
-	socket, err := td.NewSocket(
+	var err error
+	a.ws, err = td.NewSocket(
 		ctx,
 		&websocket.DialOptions{HTTPClient: &http.Client{Timeout: c.Timeout}},
 		td.New(
@@ -46,7 +47,7 @@ func (a *app) createWS(ctx context.Context, c *conf.Schwab) (*td.WS, error) {
 
 	if err != nil {
 		l.ErrorContext(ctx, "failed creating schwab socket", "err", err)
-		return nil, err
+		return err
 	}
 
 	for _, fn := range []func(context.Context) error{
@@ -54,14 +55,18 @@ func (a *app) createWS(ctx context.Context, c *conf.Schwab) (*td.WS, error) {
 		a.subChartFutures,
 	} {
 		if err := fn(ctx); err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	return socket, nil
+	return nil
 }
 
 func (a *app) subFutures(ctx context.Context) error {
+	if len(a.futures) == 0 {
+		return nil
+	}
+
 	_, err := a.ws.AddFutureSubscription(ctx, &td.FutureReq{
 		Symbols: a.futures,
 		Fields:  td.FutureFieldValues(),

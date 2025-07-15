@@ -47,7 +47,7 @@ down: ## teardown docker compose
 # Running
 #======================================
 run-%: ## Run the server using .env variables
-	export $$(cat .env | xargs) && ./bin/$(patsubst run-%,%,$@)
+	export $$(cat .env | grep -v '#' | xargs) && ./bin/$(patsubst run-%,%,$@)
 
 #======================================
 # Protobuf
