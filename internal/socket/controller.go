@@ -41,7 +41,8 @@ type Controller struct {
 	chartFuture forwarder[*chartFuture, *stream.ChartFuture]
 }
 
-func New(appName string, logger *slog.Logger, js jetstream.JetStream, timeout time.Duration) *Controller {
+func New(appName string, logger *slog.Logger, js jetstream.JetStream, prefix string, timeout time.Duration) *Controller {
+	prefix += "."
 	return &Controller{
 		future: forwarder[*future, *stream.Future]{
 			metrics: newMetrics(appName, "futures"),
@@ -49,6 +50,7 @@ func New(appName string, logger *slog.Logger, js jetstream.JetStream, timeout ti
 			js:      js,
 			logger:  logger,
 			conv:    futureToProto,
+			prefix:  prefix,
 		},
 		chartFuture: forwarder[*chartFuture, *stream.ChartFuture]{
 			metrics: newMetrics(appName, "chart_futures"),
@@ -56,6 +58,7 @@ func New(appName string, logger *slog.Logger, js jetstream.JetStream, timeout ti
 			js:      js,
 			logger:  logger,
 			conv:    newChartFuture,
+			prefix:  prefix,
 		},
 	}
 }
@@ -70,6 +73,7 @@ type jetstreamMsg interface {
 
 type forwarder[X jetstreamMsg, Y proto.Message] struct {
 	metrics
+	prefix  string
 	timeout time.Duration
 	js      jetstream.JetStream
 	logger  *slog.Logger
@@ -89,7 +93,7 @@ func (f forwarder[X, Y]) forward(x X) {
 		return
 	}
 
-	if _, err = f.js.Publish(ctx, x.subject(), buf); err != nil {
+	if _, err = f.js.Publish(ctx, f.prefix+x.subject(), buf); err != nil {
 		f.publishFail.Inc()
 		f.logger.Error("failed publishing msg async", "err", err)
 		return

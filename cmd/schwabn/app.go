@@ -53,7 +53,7 @@ func newApp(ctx context.Context) (*app, error) {
 		return nil, err
 	}
 
-	a.handler = socket.New(appName, a.Logger, js, c.Schwab.Timeout)
+	a.handler = socket.New(appName, a.Logger, js, c.Prefix, c.Schwab.Timeout)
 	if err = a.renewWS(ctx, &c.Schwab); err != nil {
 		return nil, err
 	}
