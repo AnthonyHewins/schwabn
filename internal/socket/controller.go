@@ -39,6 +39,7 @@ func newMetrics(appName, system string) metrics {
 type Controller struct {
 	future      forwarder[*future, *stream.Future]
 	chartFuture forwarder[*chartFuture, *stream.ChartFuture]
+	chartEquity forwarder[*chartEquity, *stream.ChartEquity]
 }
 
 func New(appName string, logger *slog.Logger, js jetstream.JetStream, prefix string, timeout time.Duration) *Controller {
@@ -59,6 +60,14 @@ func New(appName string, logger *slog.Logger, js jetstream.JetStream, prefix str
 			logger:  logger,
 			conv:    newChartFuture,
 			prefix:  prefix,
+		},
+		chartEquity: forwarder[*chartEquity, *stream.ChartEquity]{
+			metrics: newMetrics(appName, "chart_equities"),
+			prefix:  prefix,
+			timeout: timeout,
+			js:      js,
+			logger:  logger,
+			conv:    chartEquityToProto,
 		},
 	}
 }
