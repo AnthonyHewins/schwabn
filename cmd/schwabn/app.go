@@ -14,9 +14,9 @@ type app struct {
 	*conf.Server
 	ws *td.WS
 
-	handler      *socket.Controller
-	chartFutures []string
-	futures      []td.FutureID
+	handler                     *socket.Controller
+	chartFutures, chartEquities []string
+	futures                     []td.FutureID
 }
 
 func newApp(ctx context.Context) (*app, error) {
@@ -37,9 +37,10 @@ func newApp(ctx context.Context) (*app, error) {
 	}
 
 	a := app{
-		Server:       (*conf.Server)(b),
-		futures:      futureIDs,
-		chartFutures: c.symbolList(c.ChartFutures),
+		Server:        (*conf.Server)(b),
+		futures:       futureIDs,
+		chartFutures:  c.symbolList(c.ChartFutures),
+		chartEquities: c.symbolList(c.ChartEquities),
 	}
 	defer func() {
 		if err != nil {

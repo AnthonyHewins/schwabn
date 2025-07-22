@@ -27,8 +27,9 @@ type config struct {
 
 	Prefix string `env:"PREFIX" envDefault:"schwabn"`
 
-	Futures      string `env:"FUTURES"`
-	ChartFutures string `env:"CHART_FUTURES"`
+	Futures       string `env:"FUTURES"`
+	ChartFutures  string `env:"CHART_FUTURES"`
+	ChartEquities string `env:"CHART_EQUITIES"`
 }
 
 func (c *config) getFutureIDs() ([]td.FutureID, error) {

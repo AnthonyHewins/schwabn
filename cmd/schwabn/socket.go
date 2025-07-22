@@ -37,7 +37,7 @@ func (a *app) renewWS(ctx context.Context, c *conf.Schwab) error {
 		c.RefreshToken,
 		td.WithTimeout(c.Timeout),
 		// td.WithEquityHandler(),
-		// td.WithChartEquityHandler(),
+		td.WithChartEquityHandler(a.handler.ChartEquity),
 		td.WithFutureHandler(a.handler.Future),
 		td.WithChartFutureHandler(a.handler.ChartFuture),
 		// td.WithOptionHandler(),
@@ -53,6 +53,7 @@ func (a *app) renewWS(ctx context.Context, c *conf.Schwab) error {
 	for _, fn := range []func(context.Context) error{
 		a.subFutures,
 		a.subChartFutures,
+		a.subChartEquities,
 	} {
 		if err := fn(ctx); err != nil {
 			return err
@@ -97,5 +98,24 @@ func (a *app) subChartFutures(ctx context.Context) error {
 	}
 
 	a.Logger.InfoContext(ctx, "subbed to chart futures", "symbols", a.chartFutures)
+	return nil
+}
+
+func (a *app) subChartEquities(ctx context.Context) error {
+	if len(a.chartEquities) == 0 {
+		return nil
+	}
+
+	_, err := a.ws.AddChartEquitySubscription(ctx, &td.ChartEquityReq{
+		Symbols: a.chartEquities,
+		Fields:  td.ChartEquityFieldValues(),
+	})
+
+	if err != nil {
+		a.Logger.ErrorContext(ctx, "failed adding chart equity subscription", "err", err)
+		return err
+	}
+
+	a.Logger.InfoContext(ctx, "subbed to chart equities", "symbols", a.chartEquities)
 	return nil
 }
