@@ -3,7 +3,7 @@ module github.com/AnthonyHewins/schwabn
 go 1.24.0
 
 require (
-	github.com/AnthonyHewins/td v0.0.0-20251006014358-19cd1c5a7737
+	github.com/AnthonyHewins/td v0.0.0-20251006162521-0dcf29c5e9bc
 	github.com/alpacahq/alpaca-trade-api-go/v3 v3.8.1
 	github.com/coder/websocket v1.8.14
 	github.com/google/uuid v1.6.0

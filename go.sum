@@ -6,6 +6,8 @@ github.com/AnthonyHewins/td v0.0.0-20250318193012-04af2e1f1685 h1:ivZP6REUvAHfVG
 github.com/AnthonyHewins/td v0.0.0-20250318193012-04af2e1f1685/go.mod h1:wboMZssrBTc1aSVf9MHubzdRUniBi5fEWw21eo1hCSY=
 github.com/AnthonyHewins/td v0.0.0-20251006014358-19cd1c5a7737 h1:kzVyXZLLab9hqWRiDswUnKFTCbr1ck1W8iA0wl36IYE=
 github.com/AnthonyHewins/td v0.0.0-20251006014358-19cd1c5a7737/go.mod h1:wboMZssrBTc1aSVf9MHubzdRUniBi5fEWw21eo1hCSY=
+github.com/AnthonyHewins/td v0.0.0-20251006162521-0dcf29c5e9bc h1:WEXemltN0hovQ5pKVlHT69HKzUwxAf1IBif7d7EMI8E=
+github.com/AnthonyHewins/td v0.0.0-20251006162521-0dcf29c5e9bc/go.mod h1:wboMZssrBTc1aSVf9MHubzdRUniBi5fEWw21eo1hCSY=
 github.com/alpacahq/alpaca-trade-api-go/v3 v3.8.1 h1:EVN6EYDqGCiKv6n36X0/jiGfHxEww0M1mQUjR+gMki4=
 github.com/alpacahq/alpaca-trade-api-go/v3 v3.8.1/go.mod h1:BM5f01Jh+mmcEK/Y5kS6XsQojVSuUM8HL4MQgrRtyis=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
