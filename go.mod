@@ -3,9 +3,9 @@ module github.com/AnthonyHewins/schwabn
 go 1.24.0
 
 require (
-	github.com/AnthonyHewins/td v0.0.0-20250318193012-04af2e1f1685
+	github.com/AnthonyHewins/td v0.0.0-20251006014358-19cd1c5a7737
 	github.com/alpacahq/alpaca-trade-api-go/v3 v3.8.1
-	github.com/coder/websocket v1.8.13
+	github.com/coder/websocket v1.8.14
 	github.com/google/uuid v1.6.0
 	github.com/nats-io/nats.go v1.43.0
 	github.com/prometheus/client_golang v1.22.0
@@ -42,7 +42,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.37.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.7.0 // indirect
 	golang.org/x/net v0.42.0 // indirect
-	golang.org/x/oauth2 v0.30.0 // indirect
+	golang.org/x/oauth2 v0.31.0 // indirect
 	golang.org/x/text v0.27.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect

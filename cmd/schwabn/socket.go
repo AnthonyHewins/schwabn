@@ -22,18 +22,21 @@ func (a *app) renewWS(ctx context.Context, c *conf.Schwab) error {
 		"timeout", c.Timeout,
 	)
 
-	var err error
+	httpClient, err := td.New(
+		ctx,
+		c.BaseURL,
+		c.AuthURL,
+		c.APIKey,
+		c.APISecret,
+		c.RefreshToken,
+		td.WithClientLogger(a.Logger.Handler()),
+		td.WithHTTPAccessToken(c.AccessToken),
+	)
+
 	a.ws, err = td.NewSocket(
 		ctx,
 		&websocket.DialOptions{HTTPClient: &http.Client{Timeout: c.Timeout}},
-		td.New(
-			c.BaseURL,
-			c.AuthURL,
-			c.APIKey,
-			c.APISecret,
-			td.WithClientLogger(a.Logger.Handler()),
-			td.WithHTTPAccessToken(c.AccessToken),
-		),
+		httpClient,
 		c.RefreshToken,
 		td.WithTimeout(c.Timeout),
 		// td.WithEquityHandler(),
