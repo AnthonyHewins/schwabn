@@ -127,7 +127,9 @@ func (a *app) start(ctx context.Context, g *errgroup.Group) {
 				}
 
 				switch {
-				case err == nil || errors.Is(err, context.Canceled):
+				case err == nil:
+					continue
+				case errors.Is(err, context.Canceled):
 					return err
 				case !errors.Is(err, net.ErrClosed):
 					_ = a.ws.Close(ctx)
