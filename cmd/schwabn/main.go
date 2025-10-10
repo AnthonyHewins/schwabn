@@ -128,13 +128,13 @@ func (a *app) start(ctx context.Context, g *errgroup.Group) {
 
 				switch {
 				case err == nil || errors.Is(err, context.Canceled):
-					return nil
+					return err
 				case !errors.Is(err, net.ErrClosed):
 					_ = a.ws.Close(ctx)
 					fallthrough
 				default:
 					if err = a.renewWS(ctx, a.c); err != nil {
-						return err
+						return fmt.Errorf("failed socket renewal: %w", err)
 					}
 				}
 			}
