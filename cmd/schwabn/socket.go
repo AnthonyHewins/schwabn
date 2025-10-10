@@ -33,6 +33,10 @@ func (a *app) renewWS(ctx context.Context, c *conf.Schwab) error {
 		td.WithHTTPAccessToken(c.AccessToken),
 	)
 
+	if err != nil {
+		return err
+	}
+
 	a.ws, err = td.NewSocket(
 		ctx,
 		&websocket.DialOptions{HTTPClient: &http.Client{Timeout: c.Timeout}},
@@ -46,6 +50,12 @@ func (a *app) renewWS(ctx context.Context, c *conf.Schwab) error {
 		// td.WithOptionHandler(),
 		// td.WithFutureOptionHandler(),
 		td.WithLogger(a.Logger.Handler()),
+		td.WithErrHandler(func(err error) {
+			select {
+			case a.keepaliveErrs <- err:
+			case <-ctx.Done():
+			}
+		}),
 	)
 
 	if err != nil {

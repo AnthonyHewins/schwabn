@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -101,7 +102,7 @@ func main() {
 
 	a.shutdown()
 
-	if err = g.Wait(); err == nil || errors.Is(err, http.ErrServerClosed) {
+	if err = g.Wait(); err == nil || errors.Is(err, http.ErrServerClosed) || errors.Is(err, context.Canceled) {
 		return
 	}
 
@@ -110,6 +111,36 @@ func main() {
 }
 
 func (a *app) start(ctx context.Context, g *errgroup.Group) {
+	g.Go(func() error {
+		if err := a.renewWS(ctx, a.c); err != nil {
+			return err
+		}
+
+		for {
+			select {
+			case <-ctx.Done():
+				return nil
+			case err, ok := <-a.keepaliveErrs:
+				if !ok {
+					a.Logger.ErrorContext(ctx, "empty keepalive error sent? killing keepalive loop")
+					return fmt.Errorf("keepalive channel closed?")
+				}
+
+				switch {
+				case err == nil || errors.Is(err, context.Canceled):
+					return nil
+				case !errors.Is(err, net.ErrClosed):
+					_ = a.ws.Close(ctx)
+					fallthrough
+				default:
+					if err = a.renewWS(ctx, a.c); err != nil {
+						return err
+					}
+				}
+			}
+		}
+	})
+
 	if a.Metrics != nil {
 		g.Go(func() error {
 			a.Logger.InfoContext(ctx, "starting metrics server")
@@ -128,10 +159,6 @@ func (a *app) start(ctx context.Context, g *errgroup.Group) {
 func (a *app) shutdown() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
-
-	if a.ws != nil {
-		a.ws.Close(ctx)
-	}
 
 	a.Server.Shutdown(ctx)
 }

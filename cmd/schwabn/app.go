@@ -12,7 +12,10 @@ import (
 
 type app struct {
 	*conf.Server
-	ws *td.WS
+
+	ws            *td.WS
+	c             *conf.Schwab
+	keepaliveErrs chan error
 
 	handler                     *socket.Controller
 	chartFutures, chartEquities []string
@@ -38,6 +41,8 @@ func newApp(ctx context.Context) (*app, error) {
 
 	a := app{
 		Server:        (*conf.Server)(b),
+		c:             &c.Schwab,
+		keepaliveErrs: make(chan error),
 		futures:       futureIDs,
 		chartFutures:  c.symbolList(c.ChartFutures),
 		chartEquities: c.symbolList(c.ChartEquities),
@@ -55,9 +60,5 @@ func newApp(ctx context.Context) (*app, error) {
 	}
 
 	a.handler = socket.New(appName, a.Logger, js, c.Prefix, c.Schwab.Timeout)
-	if err = a.renewWS(ctx, &c.Schwab); err != nil {
-		return nil, err
-	}
-
 	return &a, nil
 }
