@@ -26,7 +26,8 @@ var version string
 type config struct {
 	conf.BootstrapConf
 
-	ConnAttempts uint8 `env:"CONN_ATTEMPTS" envDefault:"30"`
+	ConnAttempts uint8         `env:"CONN_ATTEMPTS" envDefault:"30"`
+	Backoff      time.Duration `env:"CONN_BACKOFF" envDefault:"2s"`
 
 	Prefix string `env:"PREFIX" envDefault:"schwabn"`
 
@@ -116,6 +117,7 @@ func (a *app) start(ctx context.Context, g *errgroup.Group) {
 	g.Go(func() error {
 		l := a.Logger.With("maxConnAttempts", a.maxConnAttempts)
 		for i := uint8(0); i < uint8(a.maxConnAttempts); i++ {
+			time.Sleep(a.connBackoff)
 			scopedCtx, cancel := context.WithCancel(ctx)
 
 			err := a.renewWS(scopedCtx, a.c)

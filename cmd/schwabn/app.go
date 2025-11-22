@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"time"
 
 	"github.com/AnthonyHewins/schwabn/internal/conf"
 	"github.com/AnthonyHewins/schwabn/internal/socket"
@@ -18,6 +19,7 @@ type app struct {
 	keepaliveErrs chan error
 
 	maxConnAttempts uint8
+	connBackoff     time.Duration
 
 	handler                     *socket.Controller
 	chartFutures, chartEquities []string
@@ -49,6 +51,7 @@ func newApp(ctx context.Context) (*app, error) {
 		chartFutures:    c.symbolList(c.ChartFutures),
 		chartEquities:   c.symbolList(c.ChartEquities),
 		maxConnAttempts: c.ConnAttempts,
+		connBackoff:     c.Backoff,
 	}
 	defer func() {
 		if err != nil {
