@@ -3,7 +3,7 @@ module github.com/AnthonyHewins/schwabn
 go 1.24.0
 
 require (
-	github.com/AnthonyHewins/td v0.0.0-20251116145854-23e5fadda614
+	github.com/AnthonyHewins/td v0.0.0-20251122200403-2a6f87052577
 	github.com/alpacahq/alpaca-trade-api-go/v3 v3.9.0
 	github.com/coder/websocket v1.8.14
 	github.com/google/uuid v1.6.0
@@ -16,7 +16,7 @@ require (
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.38.0
 	go.opentelemetry.io/otel/sdk v1.38.0
 	go.opentelemetry.io/otel/trace v1.38.0
-	google.golang.org/grpc v1.76.0
+	google.golang.org/grpc v1.77.0
 	google.golang.org/protobuf v1.36.10
 )
 
@@ -34,7 +34,7 @@ require (
 	github.com/mailru/easyjson v0.9.1 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.67.2 // indirect
+	github.com/prometheus/common v0.67.4 // indirect
 	github.com/prometheus/procfs v0.19.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
@@ -52,9 +52,9 @@ require (
 require (
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/klauspost/compress v1.18.1 // indirect
-	github.com/nats-io/nkeys v0.4.11 // indirect
+	github.com/nats-io/nkeys v0.4.12 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
-	golang.org/x/crypto v0.44.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
 	golang.org/x/sync v0.18.0
 	golang.org/x/sys v0.38.0 // indirect
 	k8s.io/utils v0.0.0-20250502105355-0f33e8f1c979

@@ -51,6 +51,10 @@ func (a *app) renewWS(ctx context.Context, c *conf.Schwab) error {
 		// td.WithFutureOptionHandler(),
 		td.WithLogger(a.Logger.Handler()),
 		td.WithErrHandler(func(err error) {
+			if err == nil {
+				return
+			}
+
 			select {
 			case a.keepaliveErrs <- err:
 			case <-ctx.Done():

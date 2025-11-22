@@ -26,6 +26,8 @@ var version string
 type config struct {
 	conf.BootstrapConf
 
+	ConnAttempts uint8 `env:"CONN_ATTEMPTS" envDefault:"30"`
+
 	Prefix string `env:"PREFIX" envDefault:"schwabn"`
 
 	Futures       string `env:"FUTURES"`
@@ -69,7 +71,7 @@ func main() {
 
 	a, err := newApp(ctx)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
@@ -112,35 +114,37 @@ func main() {
 
 func (a *app) start(ctx context.Context, g *errgroup.Group) {
 	g.Go(func() error {
-		if err := a.renewWS(ctx, a.c); err != nil {
-			return err
-		}
+		l := a.Logger.With("maxConnAttempts", a.maxConnAttempts)
+		for i := uint8(0); i < uint8(a.maxConnAttempts); i++ {
+			scopedCtx, cancel := context.WithCancel(ctx)
 
-		for {
+			err := a.renewWS(scopedCtx, a.c)
+			if err != nil {
+				cancel()
+				l.ErrorContext(ctx, "failed connection attempt, retrying", "attempt", i)
+				continue
+			}
+
+			i = 0
 			select {
 			case <-ctx.Done():
-				return nil
+				cancel()
+				a.Logger.ErrorContext(ctx, "application context killed; user or system wants to end process", "err", ctx.Err())
+				return ctx.Err()
 			case err, ok := <-a.keepaliveErrs:
+				cancel()
 				if !ok {
-					a.Logger.ErrorContext(ctx, "empty keepalive error sent? killing keepalive loop")
+					l.ErrorContext(ctx, "empty keepalive error sent? keepalive pipe closed? killing keepalive loop")
 					return fmt.Errorf("keepalive channel closed?")
 				}
 
-				switch {
-				case err == nil:
-					continue
-				case errors.Is(err, context.Canceled):
-					return err
-				case !errors.Is(err, net.ErrClosed):
+				if !errors.Is(err, net.ErrClosed) {
 					_ = a.ws.Close(ctx)
-					fallthrough
-				default:
-					if err = a.renewWS(ctx, a.c); err != nil {
-						return fmt.Errorf("failed socket renewal: %w", err)
-					}
 				}
 			}
 		}
+
+		return fmt.Errorf("exceeeded connection attempt maximum %d", a.maxConnAttempts)
 	})
 
 	if a.Metrics != nil {

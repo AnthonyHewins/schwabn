@@ -17,6 +17,8 @@ type app struct {
 	c             *conf.Schwab
 	keepaliveErrs chan error
 
+	maxConnAttempts uint8
+
 	handler                     *socket.Controller
 	chartFutures, chartEquities []string
 	futures                     []td.FutureID
@@ -40,12 +42,13 @@ func newApp(ctx context.Context) (*app, error) {
 	}
 
 	a := app{
-		Server:        (*conf.Server)(b),
-		c:             &c.Schwab,
-		keepaliveErrs: make(chan error),
-		futures:       futureIDs,
-		chartFutures:  c.symbolList(c.ChartFutures),
-		chartEquities: c.symbolList(c.ChartEquities),
+		Server:          (*conf.Server)(b),
+		c:               &c.Schwab,
+		keepaliveErrs:   make(chan error),
+		futures:         futureIDs,
+		chartFutures:    c.symbolList(c.ChartFutures),
+		chartEquities:   c.symbolList(c.ChartEquities),
+		maxConnAttempts: c.ConnAttempts,
 	}
 	defer func() {
 		if err != nil {
