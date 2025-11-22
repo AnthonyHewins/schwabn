@@ -18,6 +18,8 @@ github.com/AnthonyHewins/td v0.0.0-20251116145854-23e5fadda614 h1:GYgUPihcDlFYiF
 github.com/AnthonyHewins/td v0.0.0-20251116145854-23e5fadda614/go.mod h1:Ngo3dyKZSXPZWmRRIVEl0rfxBFSEIJ5Ra7nyTgcogCs=
 github.com/AnthonyHewins/td v0.0.0-20251122200403-2a6f87052577 h1:xAoWXLS0KU8pyYoi2vR5r0eKjTvrlod9iJrYf4+h63w=
 github.com/AnthonyHewins/td v0.0.0-20251122200403-2a6f87052577/go.mod h1:Ngo3dyKZSXPZWmRRIVEl0rfxBFSEIJ5Ra7nyTgcogCs=
+github.com/AnthonyHewins/td v0.0.0-20251122215409-766057bb4eac h1:kUDn969wwPd6e5X5u4RDkNfkx4XIursb51jZc5dv/j8=
+github.com/AnthonyHewins/td v0.0.0-20251122215409-766057bb4eac/go.mod h1:Ngo3dyKZSXPZWmRRIVEl0rfxBFSEIJ5Ra7nyTgcogCs=
 github.com/alpacahq/alpaca-trade-api-go/v3 v3.8.1 h1:EVN6EYDqGCiKv6n36X0/jiGfHxEww0M1mQUjR+gMki4=
 github.com/alpacahq/alpaca-trade-api-go/v3 v3.8.1/go.mod h1:BM5f01Jh+mmcEK/Y5kS6XsQojVSuUM8HL4MQgrRtyis=
 github.com/alpacahq/alpaca-trade-api-go/v3 v3.9.0 h1:UqrbAa9gncu6GeCxf6vs09jw/n/o+pd6nziRjk3Twjg=
